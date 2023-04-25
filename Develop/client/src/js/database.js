@@ -1,21 +1,24 @@
-import { openDB } from 'idb';
+import { MongoClient } from 'mongodb';
 
-const initdb = async () =>
-  openDB('jate', 1, {
-    upgrade(db) {
-      if (db.objectStoreNames.contains('jate')) {
-        console.log('jate database already exists');
-        return;
-      }
-      db.createObjectStore('jate', { keyPath: 'id', autoIncrement: true });
-      console.log('jate database created');
-    },
-  });
+const uri = 'mongodb://localhost:27017';
+const dbName = 'myDb';
+const collectionName = 'myCollection';
 
-// TODO: Add logic to a method that accepts some content and adds it to the database
-export const putDb = async (content) => console.error('putDb not implemented');
+export const putDb = async (content) => {
+  const client = new MongoClient(uri, { useUnifiedTopology: true });
+  await client.connect();
+  const db = client.db(dbName);
+  const collection = db.collection(collectionName);
+  await collection.insertOne({ content });
+  await client.close();
+};
 
-// TODO: Add logic for a method that gets all the content from the database
-export const getDb = async () => console.error('getDb not implemented');
-
-initdb();
+export const getDb = async () => {
+  const client = new MongoClient(uri, { useUnifiedTopology: true });
+  await client.connect();
+  const db = client.db(dbName);
+  const collection = db.collection(collectionName);
+  const result = await collection.find({}).toArray();
+  await client.close();
+  return result.map((item) => item.content);
+};
