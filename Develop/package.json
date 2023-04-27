@@ -1,6 +1,6 @@
 {
   "name": "JATE",
-  "engines": { "node": "16.19.1" },
+  "engines": { "node": "16.19.0" },
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
